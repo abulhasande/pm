@@ -1,0 +1,69 @@
+{
+  "database": "sqlite",
+  "version": 1,
+  "description": "SQLite schema for a multi-user project management app with one Kanban board per user in the MVP.",
+  "tables": {
+    "users": {
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primary_key": true },
+        { "name": "username", "type": "TEXT", "not_null": true, "unique": true },
+        { "name": "password_hash", "type": "TEXT", "not_null": true },
+        { "name": "created_at", "type": "TEXT", "not_null": true, "default": "CURRENT_TIMESTAMP" }
+      ],
+      "notes": [
+        "MVP uses a hardcoded user account ('user'/'password'), but the schema supports future multi-user growth.",
+        "The password_hash field should store a hashed password rather than plaintext data."
+      ]
+    },
+    "boards": {
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primary_key": true },
+        { "name": "user_id", "type": "INTEGER", "not_null": true, "foreign_key": "users.id" },
+        { "name": "name", "type": "TEXT", "not_null": true, "default": "Project Board" },
+        { "name": "created_at", "type": "TEXT", "not_null": true, "default": "CURRENT_TIMESTAMP" },
+        { "name": "updated_at", "type": "TEXT", "not_null": true, "default": "CURRENT_TIMESTAMP" }
+      ],
+      "notes": [
+        "The MVP supports one board per user, but this structure allows future expansion to multiple boards." 
+      ]
+    },
+    "columns": {
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primary_key": true },
+        { "name": "board_id", "type": "INTEGER", "not_null": true, "foreign_key": "boards.id" },
+        { "name": "title", "type": "TEXT", "not_null": true },
+        { "name": "position", "type": "INTEGER", "not_null": true },
+        { "name": "created_at", "type": "TEXT", "not_null": true, "default": "CURRENT_TIMESTAMP" }
+      ],
+      "notes": [
+        "The default MVP columns are Backlog, Discovery, In Progress, Review, and Done.",
+        "A rename operation updates the title value without changing the column identity."
+      ]
+    },
+    "cards": {
+      "columns": [
+        { "name": "id", "type": "INTEGER", "primary_key": true },
+        { "name": "board_id", "type": "INTEGER", "not_null": true, "foreign_key": "boards.id" },
+        { "name": "column_id", "type": "INTEGER", "not_null": true, "foreign_key": "columns.id" },
+        { "name": "title", "type": "TEXT", "not_null": true },
+        { "name": "details", "type": "TEXT", "default": "" },
+        { "name": "position", "type": "INTEGER", "not_null": true },
+        { "name": "created_at", "type": "TEXT", "not_null": true, "default": "CURRENT_TIMESTAMP" },
+        { "name": "updated_at", "type": "TEXT", "not_null": true, "default": "CURRENT_TIMESTAMP" }
+      ],
+      "notes": [
+        "Each card belongs to exactly one board and one column.",
+        "The position indicates ordering within a column."
+      ]
+    }
+  },
+  "seed_data": {
+    "default_columns": [
+      "Backlog",
+      "Discovery",
+      "In Progress",
+      "Review",
+      "Done"
+    ]
+  }
+}
